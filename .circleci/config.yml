@@ -5,7 +5,7 @@ jobs:
       - image: circleci/node:12.14
     steps:
       - checkout
-      - run: npm install
+      - run: npm run release
       - save_cache:
           key: 'wilsonid-build-{{ .Branch }}-{{ .Revision }}'
           paths:

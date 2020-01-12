@@ -3,7 +3,21 @@
     "bucket": {
         "fromExport": "BuildOutputBucketName"
     },
-    "artifacts": [],
+    "artifacts": [
+        {
+            "name": "UnzipperLambda",
+            "root": "packages/unzipper-lambda",
+            "patterns": [
+                "dist/**/*",
+                "node_modules/**/*"
+            ]
+        },
+        {
+            "name": "Website",
+            "root": "website",
+            "patterns": ["**/*"]
+        }
+    ],
     "stacks": [
         {
             "name": "WilsonIDBudgetStack",
@@ -11,6 +25,13 @@
             "capabilities": [],
             "parameters": {},
             "templatePath": "cloudformation/BudgetStack.template.json"
+        },
+        {
+            "name": "WilsonIDAppStack",
+            "artifactNamesConsumed": ["UnzipperLambda", "Website"],
+            "capabilities": ["CAPABILITY_IAM"],
+            "parameters": {},
+            "templatePath": "cloudformation/AppStack.template.json"
         }
     ]
 }
