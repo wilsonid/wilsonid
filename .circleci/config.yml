@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12.14
+    steps:
+      - checkout
+      - save_cache:
+          key: 'wilsonid-build-{{ .Branch }}-{{ .Revision }}'
+          paths:
+            - ./
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
