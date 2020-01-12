@@ -1,0 +1,48 @@
+{
+    "Resources": {
+      "WilsonIDBudget": {
+        "Type": "AWS::Budgets::Budget",
+        "Properties": {
+          "Budget": {
+            "BudgetLimit": {
+              "Amount": 1,
+              "Unit": "USD"
+            },
+            "BudgetName": "WilsonIDBudget",
+            "BudgetType": "COST",
+            "TimeUnit": "MONTHLY"
+          },
+          "NotificationsWithSubscribers": [
+            {
+              "Notification": {
+                "ComparisonOperator": "GREATER_THAN",
+                "NotificationType": "FORECASTED",
+                "Threshold": 0,
+                "ThresholdType": "ABSOLUTE_VALUE"
+              },
+              "Subscribers": [
+                {
+                  "Address": "dan+aws-budget@wilsonid.com",
+                  "SubscriptionType": "EMAIL"
+                }
+              ]
+            },
+            {
+              "Notification": {
+                "ComparisonOperator": "GREATER_THAN",
+                "NotificationType": "ACTUAL",
+                "Threshold": 0,
+                "ThresholdType": "ABSOLUTE_VALUE"
+              },
+              "Subscribers": [
+                {
+                  "Address": "dan+aws-budget@wilsonid.com",
+                  "SubscriptionType": "EMAIL"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }

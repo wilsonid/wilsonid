@@ -1,0 +1,16 @@
+{
+    "strategy": "aws-cfn",
+    "bucket": {
+        "fromExport": "BuildOutputBucketName"
+    },
+    "artifacts": [],
+    "stacks": [
+        {
+            "name": "WilsonIDBudgetStack",
+            "artifactNamesConsumed": [],
+            "capabilities": [],
+            "parameters": {},
+            "templatePath": "cloudformation/BudgetStack.template.json"
+        }
+    ]
+}

@@ -1,0 +1,89 @@
+{
+    "Resources": {
+      "AdminConsoleUser": {
+        "Type": "AWS::IAM::User",
+        "Properties": {
+          "ManagedPolicyArns": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":iam::aws:policy/AdministratorAccess"
+                ]
+              ]
+            }
+          ],
+          "UserName": "admin"
+        },
+        "Metadata": {
+          "aws:cdk:path": "BootstrapStack/AdminConsoleUser/Resource"
+        }
+      },
+      "CIUser": {
+        "Type": "AWS::IAM::User",
+        "Properties": {
+          "ManagedPolicyArns": [
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":iam::aws:policy/AdministratorAccess"
+                ]
+              ]
+            }
+          ],
+          "UserName": "WilsonIDCIUser"
+        },
+        "Metadata": {
+          "aws:cdk:path": "BootstrapStack/CIUser/Resource"
+        }
+      },
+      "BuildOutputBucket": {
+        "Type": "AWS::S3::Bucket",
+        "Properties": {
+          "BucketName": {
+            "Fn::Join": [
+              "",
+              [
+                "wilsonid-build-output-bucket-",
+                {
+                  "Ref": "AWS::AccountId"
+                }
+              ]
+            ]
+          },
+          "LifecycleConfiguration": {
+            "Rules": [
+              {
+                "ExpirationInDays": 1,
+                "Status": "Enabled"
+              }
+            ]
+          }
+        },
+        "UpdateReplacePolicy": "Retain",
+        "DeletionPolicy": "Retain",
+        "Metadata": {
+          "aws:cdk:path": "BootstrapStack/BuildOutputBucket/Resource"
+        }
+      }
+    },
+    "Outputs": {
+      "BuildOutputBucketName": {
+        "Value": {
+          "Ref": "BuildOutputBucket"
+        },
+        "Export": {
+          "Name": "BuildOutputBucketName"
+        }
+      }
+    }
+  }

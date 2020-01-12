@@ -1,0 +1,23 @@
+{
+  "name": "wilsonid",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "cloud-deploy",
+    "test": "echo \"Error: no test specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wilsonid/wilsonid.git"
+  },
+  "author": "Dan Wilson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wilsonid/wilsonid/issues"
+  },
+  "homepage": "https://github.com/wilsonid/wilsonid#readme",
+  "devDependencies": {
+    "@kgarsjo/cloud-deploy": "0.3.0"
+  }
+}
