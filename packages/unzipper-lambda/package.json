@@ -1,0 +1,23 @@
+{
+  "name": "@wilsonid/unzipper-lambda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/adm-zip": "^0.4.32",
+    "@types/aws-lambda": "^8.10.25",
+    "@types/mime-types": "^2.1.0",
+    "@types/node": "^12.0.0",
+    "typescript": "^3.4.5"
+  },
+  "dependencies": {
+    "adm-zip": "^0.4.13",
+    "aws-sdk": "^2.452.0",
+    "mime-types": "^2.1.25"
+  }
+}

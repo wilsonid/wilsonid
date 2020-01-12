@@ -1,0 +1,393 @@
+{
+  "Parameters": {
+    "UnzipperLambdaArtifactBucket": {
+      "Type": "String"
+    },
+    "UnzipperLambdaArtifactKey": {
+      "Type": "String"
+    },
+    "WebsiteArtifactBucket": {
+      "Type": "String"
+    },
+    "WebsiteArtifactKey": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "WebsiteOriginAccessIdentity": {
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+      "Properties": {
+        "CloudFrontOriginAccessIdentityConfig": {
+          "Comment": "Allows CloudFront to reach the bucket"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "AppStack/Website/OriginAccessIdentity/Resource"
+      }
+    },
+    "WebsiteHostingBucket": {
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "WebsiteHostingBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "WebsiteHostingBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Principal": {
+                "CanonicalUser": {
+                  "Fn::GetAtt": [
+                    "WebsiteOriginAccessIdentity",
+                    "S3CanonicalUserId"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "WebsiteHostingBucket",
+                        "Arn"
+                      ]
+                    },
+                    "/*"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "s3:ListBucket",
+              "Effect": "Allow",
+              "Principal": {
+                "CanonicalUser": {
+                  "Fn::GetAtt": [
+                    "WebsiteOriginAccessIdentity",
+                    "S3CanonicalUserId"
+                  ]
+                }
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "WebsiteHostingBucket",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "CanonicalUser": {
+                  "Fn::GetAtt": [
+                    "WebsiteOriginAccessIdentity",
+                    "S3CanonicalUserId"
+                  ]
+                }
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "WebsiteHostingBucket",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "WebsiteHostingBucket",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "AppStack/Website/HostingBucket/Policy/Resource"
+      }
+    },
+    "WebsiteWebsiteUnzipperServiceRole8EE7ECA9": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "AppStack/Website/WebsiteUnzipper/ServiceRole/Resource"
+      }
+    },
+    "WebsiteWebsiteUnzipperServiceRoleDefaultPolicyADD1791F": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "WebsiteArtifactBucket"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "WebsiteArtifactBucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "s3:DeleteObject",
+                "s3:PutObject"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "WebsiteHostingBucket",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "WebsiteHostingBucket",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "WebsiteWebsiteUnzipperServiceRoleDefaultPolicyADD1791F",
+        "Roles": [
+          {
+            "Ref": "WebsiteWebsiteUnzipperServiceRole8EE7ECA9"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "AppStack/Website/WebsiteUnzipper/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "WebsiteWebsiteUnzipperEB8E66B2": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "UnzipperLambdaArtifactBucket"
+          },
+          "S3Key": {
+            "Ref": "UnzipperLambdaArtifactKey"
+          }
+        },
+        "Handler": "dist/index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "WebsiteWebsiteUnzipperServiceRole8EE7ECA9",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Environment": {
+          "Variables": {
+            "SOURCE_BUCKET_NAME": {
+              "Ref": "WebsiteArtifactBucket"
+            }
+          }
+        },
+        "Timeout": 60
+      },
+      "DependsOn": [
+        "WebsiteWebsiteUnzipperServiceRoleDefaultPolicyADD1791F",
+        "WebsiteWebsiteUnzipperServiceRole8EE7ECA9"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "AppStack/Website/WebsiteUnzipper/Resource"
+      }
+    },
+    "WebsiteUnzipperCustomResource85E4A609": {
+      "Type": "Custom::Unzipper",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "WebsiteWebsiteUnzipperEB8E66B2",
+            "Arn"
+          ]
+        },
+        "DestinationBucket": {
+          "Ref": "WebsiteHostingBucket"
+        },
+        "Key": {
+          "Ref": "WebsiteArtifactKey"
+        }
+      },
+      "DependsOn": [
+        "WebsiteWebsiteUnzipperEB8E66B2",
+        "WebsiteWebsiteUnzipperServiceRoleDefaultPolicyADD1791F",
+        "WebsiteWebsiteUnzipperServiceRole8EE7ECA9"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "AppStack/Website/UnzipperCustomResource"
+      }
+    },
+    "WebsiteDistributionCFDistributionD4D90A52": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "CustomErrorResponses": [
+            {
+              "ErrorCode": 404,
+              "ResponseCode": 200,
+              "ResponsePagePath": "/index.html"
+            }
+          ],
+          "DefaultCacheBehavior": {
+            "AllowedMethods": [
+              "GET",
+              "HEAD",
+              "OPTIONS"
+            ],
+            "CachedMethods": [
+              "GET",
+              "HEAD"
+            ],
+            "Compress": true,
+            "ForwardedValues": {
+              "Cookies": {
+                "Forward": "none"
+              },
+              "QueryString": false
+            },
+            "TargetOriginId": "origin1",
+            "ViewerProtocolPolicy": "redirect-to-https"
+          },
+          "DefaultRootObject": "index.html",
+          "Enabled": true,
+          "HttpVersion": "http2",
+          "IPV6Enabled": true,
+          "Origins": [
+            {
+              "DomainName": {
+                "Fn::GetAtt": [
+                  "WebsiteHostingBucket",
+                  "RegionalDomainName"
+                ]
+              },
+              "Id": "origin1",
+              "S3OriginConfig": {
+                "OriginAccessIdentity": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "origin-access-identity/cloudfront/",
+                      {
+                        "Ref": "WebsiteOriginAccessIdentity"
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ],
+          "PriceClass": "PriceClass_100"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "AppStack/Website/Distribution/CFDistribution"
+      }
+    }
+  },
+  "Outputs": {
+    "WebsiteHostingBucketName58185798": {
+      "Value": {
+        "Ref": "WebsiteHostingBucket"
+      }
+    },
+    "WebsiteDistributionDomainName223BFC65": {
+      "Value": {
+        "Fn::GetAtt": [
+          "WebsiteDistributionCFDistributionD4D90A52",
+          "DomainName"
+        ]
+      }
+    }
+  }
+}
