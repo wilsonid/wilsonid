@@ -27,7 +27,7 @@ const pushAllFilesToS3 = async (destinationBucket: string, zip: AdmZip) => {
         zip.getEntries().map((entry) => {
             console.log(`s3.putObject Bucket=${destinationBucket} Key=${entry.entryName}`);
             return s3.putObject({
-                Body: zip.readAsText(entry.entryName),
+                Body: zip.readFile(entry.entryName) as Buffer,
                 Bucket: destinationBucket,
                 ContentType: getMimeType(entry.entryName),
                 Key: entry.entryName,
